@@ -4,12 +4,13 @@ function NumerologyApp() {
     });
     const [result, setResult] = React.useState(null);
     const resultsRef = React.useRef(null);
+    const inputRef = React.useRef(null);
 
     const calculateNumerology = (dateString) => {
         if (!dateString) return null;
         const [year, month, day] = dateString.split('-').map(Number);
 
-        // Cálculo interno de edad (solo para activar la etapa, sin mostrar el número)
+        // Cálculo interno de edad
         const today = new Date();
         let userAge = today.getFullYear() - year;
         const m = today.getMonth() - (month - 1);
@@ -147,6 +148,16 @@ function NumerologyApp() {
         }
     };
 
+    // Función para refrescar y permitir ingresar una nueva fecha
+    const handleReset = () => {
+        setBirthDate('');
+        setResult(null);
+        localStorage.removeItem('vidia_birth_date');
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+    };
+
     return (
         <div className="min-h-screen bg-[#0d0714] text-slate-100 flex flex-col justify-between font-sans-modern">
             
@@ -184,18 +195,34 @@ function NumerologyApp() {
                 <section className="bg-[#140b21] border border-purple-500/30 p-6 sm:p-8 rounded-3xl shadow-2xl relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-purple-400 to-indigo-600"></div>
                     <form onSubmit={handleCalculate} className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-                        <div className="w-full sm:w-auto flex-1">
-                            <label className="block text-xs uppercase font-bold tracking-wider text-purple-300/80 mb-2">
-                                Ingrese su Fecha de Nacimiento
-                            </label>
-                            <input 
-                                type="date" 
-                                value={birthDate}
-                                onChange={(e) => setBirthDate(e.target.value)}
-                                className="w-full bg-[#0d0714] border border-purple-500/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-400 font-medium"
-                                required
-                            />
+                        <div className="w-full sm:w-auto flex-1 flex items-center gap-2">
+                            <div className="flex-1">
+                                <label className="block text-xs uppercase font-bold tracking-wider text-purple-300/80 mb-2">
+                                    Ingrese su Fecha de Nacimiento
+                                </label>
+                                <input 
+                                    ref={inputRef}
+                                    type="date" 
+                                    value={birthDate}
+                                    onChange={(e) => setBirthDate(e.target.value)}
+                                    className="w-full bg-[#0d0714] border border-purple-500/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-400 font-medium"
+                                    required
+                                />
+                            </div>
+
+                            {/* Botón Circular para Refrescar / Nueva Consulta */}
+                            <button
+                                type="button"
+                                onClick={handleReset}
+                                title="Ingresar otra fecha"
+                                className="mt-6 p-3 bg-[#0d0714] hover:bg-purple-950 border border-purple-500/30 hover:border-purple-400 text-purple-300 hover:text-white rounded-xl transition shadow-md flex items-center justify-center group cursor-pointer"
+                            >
+                                <svg className="w-5 h-5 group-hover:rotate-180 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                                </svg>
+                            </button>
                         </div>
+
                         <button 
                             type="submit" 
                             className="w-full sm:w-auto mt-2 sm:mt-6 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white font-bold px-8 py-3.5 rounded-xl transition shadow-lg shadow-purple-500/20 cursor-pointer flex items-center justify-center gap-2 text-xs tracking-wider uppercase"
@@ -235,7 +262,7 @@ function NumerologyApp() {
                                 </p>
                             </div>
 
-                            {/* TARJETA DE PINÁCULOS ESPACIOSA Y LIMPIA */}
+                            {/* TARJETA DE PINÁCULOS */}
                             <div className="bg-[#140b21] border border-purple-500/30 p-6 sm:p-8 rounded-2xl shadow-lg md:col-span-2 space-y-6">
                                 <div>
                                     <h3 className="font-cinzel text-lg font-bold text-purple-300">Los 4 Pináculos (Fases de Evolución)</h3>
@@ -269,10 +296,12 @@ function NumerologyApp() {
                                     })}
                                 </div>
 
-                                {/* BARRITA EXPLICATIVA DE LA ETAPA ACTIVA */}
+                                {/* BARRITA EXPLICATIVA CON LA ESTRELLA DEL LOGO */}
                                 {result.activePinnacle && (
                                     <div className="bg-[#180e29] border-l-4 border-purple-400 p-4 rounded-xl text-xs text-purple-200/90 leading-relaxed mt-4 flex items-center gap-3">
-                                        <span className="text-xl">🌟</span>
+                                        <svg className="w-5 h-5 text-purple-300 glow-star flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 2l2.9 6.8 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7-5.4-4.7 7.1-.6z"/>
+                                        </svg>
                                         <div>
                                             <strong className="text-purple-300 block mb-0.5">Tu Momento Presente (Etapa {result.activePhase}):</strong>
                                             <span>{result.activePinnacle.desc}</span>
@@ -300,10 +329,14 @@ function NumerologyApp() {
                     </section>
                 )}
 
-                {/* EXPLICACIÓN DIDÁCTICA */}
+                {/* EXPLICACIÓN DIDÁCTICA CON ISOTIPO MÍSTICO / NÚMEROS */}
                 <section className="bg-[#140b21]/70 border border-purple-500/20 p-8 rounded-3xl space-y-6">
-                    <h2 className="font-cinzel text-xl font-bold text-purple-300 flex items-center gap-2">
-                        <span>📚</span> ¿Cómo funciona la Numerología Pitagórica?
+                    <h2 className="font-cinzel text-xl font-bold text-purple-300 flex items-center gap-3">
+                        {/* Isotipo Místico de Números (1 2 3 estilo sutil) */}
+                        <span className="p-2 bg-purple-950/60 rounded-xl border border-purple-500/30 text-purple-300 text-xs font-mono tracking-widest font-bold inline-flex items-center justify-center">
+                            123
+                        </span>
+                        <span>¿Cómo funciona la Numerología Pitagórica?</span>
                     </h2>
                     <p className="text-slate-300 leading-relaxed text-xs sm:text-sm">
                         Fundada por el filósofo y matemático <strong>Pitágoras</strong>, esta disciplina sostiene que los números del 1 al 9 (y los números maestros 11, 22 y 33) expresan cualidades energéticas únicas que moldean nuestra existencia.
