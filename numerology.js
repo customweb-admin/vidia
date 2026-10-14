@@ -9,7 +9,7 @@ function NumerologyApp() {
         if (!dateString) return null;
         const [year, month, day] = dateString.split('-').map(Number);
 
-        // Cálculo de Edad Actual
+        // Cálculo interno de edad (solo para activar la etapa, sin mostrar el número)
         const today = new Date();
         let userAge = today.getFullYear() - year;
         const m = today.getMonth() - (month - 1);
@@ -64,17 +64,37 @@ function NumerologyApp() {
         const p3End = p2End + 9;
         const p4Start = p3End + 1;
 
-        // Determinar qué pináculo está activo hoy según la edad
+        // Determinar etapa activa
         let activePhase = 4;
         if (userAge <= p1Age) activePhase = 1;
         else if (userAge >= p2Start && userAge <= p2End) activePhase = 2;
         else if (userAge >= p3Start && userAge <= p3End) activePhase = 3;
 
         const pinnacles = [
-            { phase: 1, value: pinacle1, ageRange: `0 - ${p1Age} años`, minAge: 0, maxAge: p1Age },
-            { phase: 2, value: pinacle2, ageRange: `${p2Start} - ${p2End} años`, minAge: p2Start, maxAge: p2End },
-            { phase: 3, value: pinacle3, ageRange: `${p3Start} - ${p3End} años`, minAge: p3Start, maxAge: p3End },
-            { phase: 4, value: pinacle4, ageRange: `${p4Start} a 99+ años`, minAge: p4Start, maxAge: 120 }
+            { 
+                phase: 1, 
+                value: pinacle1, 
+                ageRange: `0 - ${p1Age} años`, 
+                desc: "Etapa de siembra, aprendizaje inicial y construcción de tu potencial personal." 
+            },
+            { 
+                phase: 2, 
+                value: pinacle2, 
+                ageRange: `${p2Start} - ${p2End} años`, 
+                desc: "Etapa de consolidación, desarrollo de relaciones y aplicación de tus talentos." 
+            },
+            { 
+                phase: 3, 
+                value: pinacle3, 
+                ageRange: `${p3Start} - ${p3End} años`, 
+                desc: "Etapa de madurez, liderazgo consciente y manifestación de grandes proyectos." 
+            },
+            { 
+                phase: 4, 
+                value: pinacle4, 
+                ageRange: `${p4Start} a 99+ años`, 
+                desc: "Etapa de cosecha, mentoría, sabiduría y plenitud que rige tu momento presente." 
+            }
         ];
 
         const d1 = Math.abs(reduceToSingleDigit(day) - reduceToSingleDigit(month));
@@ -98,8 +118,8 @@ function NumerologyApp() {
 
         return {
             birthDate: dateString,
-            userAge,
             activePhase,
+            activePinnacle: pinnacles.find(p => p.phase === activePhase),
             lifePath: { value: lifePathValue, isMaster: isLifePathMaster, rawSum: totalLifePathSum },
             birthDay: { original: day, reduced: birthDayReduced },
             attitudeNumber: { value: attitudeValue },
@@ -215,41 +235,50 @@ function NumerologyApp() {
                                 </p>
                             </div>
 
-                            {/* TARJETA DE PINÁCULOS CON RESALTE DE ETAPA ACTIVA */}
-                            <div className="bg-[#140b21] border border-purple-500/30 p-6 rounded-2xl shadow-lg md:col-span-2">
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                            {/* TARJETA DE PINÁCULOS ESPACIOSA Y LIMPIA */}
+                            <div className="bg-[#140b21] border border-purple-500/30 p-6 sm:p-8 rounded-2xl shadow-lg md:col-span-2 space-y-6">
+                                <div>
                                     <h3 className="font-cinzel text-lg font-bold text-purple-300">Los 4 Pináculos (Fases de Evolución)</h3>
-                                    <span className="text-xs font-semibold text-purple-300/80 bg-purple-950/60 px-3 py-1 rounded-full border border-purple-500/20 w-fit">
-                                        Edad actual: {result.userAge} años
-                                    </span>
+                                    <p className="text-xs text-slate-400 mt-0.5">Grandes estaciones vitales marcadas por tu fecha de nacimiento.</p>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-2">
                                     {result.pinnacles.map((p) => {
                                         const isActive = p.phase === result.activePhase;
                                         return (
                                             <div 
                                                 key={p.phase} 
-                                                className={`p-4 rounded-xl text-center transition-all relative ${
+                                                className={`p-5 rounded-2xl text-center transition-all relative flex flex-col justify-between ${
                                                     isActive 
-                                                        ? 'bg-[#1e1035] border-2 border-purple-400 shadow-lg shadow-purple-500/20 scale-[1.02]' 
-                                                        : 'bg-[#0d0714] border border-purple-500/20 opacity-80'
+                                                        ? 'bg-[#1e1035] border-2 border-purple-400 shadow-xl shadow-purple-500/20 scale-[1.03] z-10' 
+                                                        : 'bg-[#0d0714] border border-purple-500/20 opacity-70'
                                                 }`}
                                             >
                                                 {isActive && (
-                                                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-indigo-600 text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full text-white shadow">
-                                                        Etapa Activa
+                                                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-indigo-600 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full text-white shadow-md border border-purple-300/30 whitespace-nowrap">
+                                                        ✨ Etapa Activa
                                                     </span>
                                                 )}
-                                                <div className="text-xs text-slate-400 mb-1 pt-1">Etapa {p.phase}</div>
-                                                <div className="text-3xl font-extrabold text-white mb-1">{p.value}</div>
-                                                <div className={`text-xs font-medium ${isActive ? 'text-purple-300 font-bold' : 'text-purple-300/70'}`}>
+                                                <div className="text-xs text-slate-400 font-medium pt-1">Etapa {p.phase}</div>
+                                                <div className="text-4xl font-black text-white my-2">{p.value}</div>
+                                                <div className={`text-xs ${isActive ? 'text-purple-300 font-bold' : 'text-purple-300/70'}`}>
                                                     {p.ageRange}
                                                 </div>
                                             </div>
                                         );
                                     })}
                                 </div>
+
+                                {/* BARRITA EXPLICATIVA DE LA ETAPA ACTIVA */}
+                                {result.activePinnacle && (
+                                    <div className="bg-[#180e29] border-l-4 border-purple-400 p-4 rounded-xl text-xs text-purple-200/90 leading-relaxed mt-4 flex items-center gap-3">
+                                        <span className="text-xl">🌟</span>
+                                        <div>
+                                            <strong className="text-purple-300 block mb-0.5">Tu Momento Presente (Etapa {result.activePhase}):</strong>
+                                            <span>{result.activePinnacle.desc}</span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {result.karmicDebts.length > 0 && (
