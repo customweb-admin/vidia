@@ -109,31 +109,22 @@ function NumerologyApp() {
     return (
         <div className="min-h-screen bg-[#0d0714] text-slate-100 flex flex-col justify-between font-sans-modern">
             
-            <!-- NAV / HEADER STICKY -->
+            {/* NAV / HEADER STICKY */}
             <header className="border-b border-purple-900/30 bg-[#0d0714]/80 backdrop-blur sticky top-0 z-50">
                 <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
                     <a href="#" className="flex items-center gap-3 group">
-                        <!-- Isotipo: Estrella 5 Puntas con Halo -->
-                        <svg class="w-7 h-7 text-purple-300 glow-star group-hover:scale-105 transition-transform" viewBox="0 0 24 24" fill="currentColor">
+                        {/* Isotipo: Estrella 5 Puntas con Halo */}
+                        <svg className="w-7 h-7 text-purple-300 glow-star group-hover:scale-105 transition-transform" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2l2.9 6.8 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7-5.4-4.7 7.1-.6z"/>
                         </svg>
                         <span className="font-cinzel text-2xl font-bold tracking-widest text-white">VIDIA PORTAL</span>
                     </a>
-
-                    <!-- Menú de Módulos (Comentado para futura expansión)
-                    <nav className="flex gap-4 text-xs font-semibold text-slate-400">
-                        <span className="text-purple-300 border-b-2 border-purple-400 pb-1 cursor-pointer">Numerología</span>
-                        <span className="opacity-50 cursor-not-allowed">Zodíaco 🔒</span>
-                        <span className="opacity-50 cursor-not-allowed">Horóscopo Chino 🔒</span>
-                        <span className="opacity-50 cursor-not-allowed">Tarot 🔒</span>
-                    </nav>
-                    -->
                 </div>
             </header>
 
             <main className="max-w-4xl mx-auto px-6 py-10 flex-1 w-full space-y-12">
                 
-                <!-- HERO SECTION -->
+                {/* HERO SECTION */}
                 <section className="text-center space-y-3">
                     <span className="inline-block text-xs uppercase font-bold tracking-widest text-purple-300 bg-purple-950/50 px-3.5 py-1 rounded-full border border-purple-500/20">
                         Ecosistema Holístico Digital
@@ -149,7 +140,7 @@ function NumerologyApp() {
                     </p>
                 </section>
 
-                <!-- CALCULADORA / FORMULARIO -->
+                {/* CALCULADORA / FORMULARIO */}
                 <section className="bg-[#140b21] border border-purple-500/30 p-6 sm:p-8 rounded-3xl shadow-2xl relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-purple-400 to-indigo-600"></div>
                     <form onSubmit={handleCalculate} className="flex flex-col sm:flex-row gap-4 items-center justify-center">
@@ -175,7 +166,7 @@ function NumerologyApp() {
                     </form>
                 </section>
 
-                <!-- RESULTADOS -->
+                {/* RESULTADOS */}
                 {result && (
                     <section ref={resultsRef} className="space-y-6 animate-fade-in scroll-mt-24">
                         <div className="flex items-center gap-3">
@@ -236,7 +227,7 @@ function NumerologyApp() {
                     </section>
                 )}
 
-                <!-- EXPLICACIÓN DIDÁCTICA -->
+                {/* EXPLICACIÓN DIDÁCTICA */}
                 <section className="bg-[#140b21]/70 border border-purple-500/20 p-8 rounded-3xl space-y-6">
                     <h2 className="font-cinzel text-xl font-bold text-purple-300 flex items-center gap-2">
                         <span>📚</span> ¿Cómo funciona la Numerología Pitagórica?
@@ -262,7 +253,7 @@ function NumerologyApp() {
 
             </main>
 
-            <!-- FOOTER -->
+            {/* FOOTER */}
             <footer className="border-t border-purple-900/30 bg-[#0d0714] py-6 text-center text-xs text-purple-300/40">
                 <p>Vidia Portal © {new Date().getFullYear()} • Ecosistema Holístico Digital</p>
             </footer>
