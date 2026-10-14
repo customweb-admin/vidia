@@ -1,6 +1,9 @@
 function NumerologyApp() {
-    const [birthDate, setBirthDate] = React.useState('');
+    const [birthDate, setBirthDate] = React.useState(() => {
+        return localStorage.getItem('vidia_birth_date') || '';
+    });
     const [result, setResult] = React.useState(null);
+    const resultsRef = React.useRef(null);
 
     const calculateNumerology = (dateString) => {
         if (!dateString) return null;
@@ -91,82 +94,179 @@ function NumerologyApp() {
     const handleCalculate = (e) => {
         e.preventDefault();
         if (birthDate) {
+            localStorage.setItem('vidia_birth_date', birthDate);
             const data = calculateNumerology(birthDate);
             setResult(data);
+            
+            setTimeout(() => {
+                if (resultsRef.current) {
+                    resultsRef.current.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 100);
         }
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-100 p-6">
-            <div className="max-w-3xl mx-auto">
-                <header className="text-center mb-10 pt-6">
-                    <h1 className="text-4xl font-extrabold text-amber-400 tracking-wider mb-2">VIDIA PORTAL</h1>
-                    <p className="text-slate-400">Calculadora de Numerología Pitagórica Interativa</p>
-                </header>
+        <div className="min-h-screen bg-[#0d0714] text-slate-100 flex flex-col justify-between font-sans-modern">
+            
+            <!-- NAV / HEADER STICKY -->
+            <header className="border-b border-purple-900/30 bg-[#0d0714]/80 backdrop-blur sticky top-0 z-50">
+                <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+                    <a href="#" className="flex items-center gap-3 group">
+                        <!-- Isotipo: Estrella 5 Puntas con Halo -->
+                        <svg class="w-7 h-7 text-purple-300 glow-star group-hover:scale-105 transition-transform" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l2.9 6.8 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7-5.4-4.7 7.1-.6z"/>
+                        </svg>
+                        <span className="font-cinzel text-2xl font-bold tracking-widest text-white">VIDIA PORTAL</span>
+                    </a>
 
-                <form onSubmit={handleCalculate} className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl mb-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
-                    <div className="w-full sm:w-auto flex-1">
-                        <label className="block text-sm font-medium text-slate-400 mb-1">Fecha de Nacimiento</label>
-                        <input 
-                            type="date" 
-                            value={birthDate}
-                            onChange={(e) => setBirthDate(e.target.value)}
-                            className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-400"
-                            required
-                        />
-                    </div>
-                    <button 
-                        type="submit" 
-                        className="w-full sm:w-auto mt-5 sm:mt-0 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold px-6 py-2.5 rounded-lg hover:from-amber-400 hover:to-amber-500 transition shadow-lg cursor-pointer"
-                    >
-                        Calcular Perfil
-                    </button>
-                </form>
+                    <!-- Menú de Módulos (Comentado para futura expansión)
+                    <nav className="flex gap-4 text-xs font-semibold text-slate-400">
+                        <span className="text-purple-300 border-b-2 border-purple-400 pb-1 cursor-pointer">Numerología</span>
+                        <span className="opacity-50 cursor-not-allowed">Zodíaco 🔒</span>
+                        <span className="opacity-50 cursor-not-allowed">Horóscopo Chino 🔒</span>
+                        <span className="opacity-50 cursor-not-allowed">Tarot 🔒</span>
+                    </nav>
+                    -->
+                </div>
+            </header>
 
+            <main className="max-w-4xl mx-auto px-6 py-10 flex-1 w-full space-y-12">
+                
+                <!-- HERO SECTION -->
+                <section className="text-center space-y-3">
+                    <span className="inline-block text-xs uppercase font-bold tracking-widest text-purple-300 bg-purple-950/50 px-3.5 py-1 rounded-full border border-purple-500/20">
+                        Ecosistema Holístico Digital
+                    </span>
+                    <h1 className="font-cinzel text-3xl sm:text-5xl font-bold text-purple-300 tracking-tight">
+                        ¿Qué te dice tu fecha de nacimiento?
+                    </h1>
+                    <p className="text-slate-300 font-semibold text-base sm:text-lg">
+                        Descúbrete a través de la numerología.
+                    </p>
+                    <p className="text-slate-400 max-w-xl mx-auto text-xs sm:text-sm leading-relaxed pt-1">
+                        La numerología pitagórica traduce la vibración de tu fecha de nacimiento en información clave sobre tus talentos, aprendizajes y momentos decisivos.
+                    </p>
+                </section>
+
+                <!-- CALCULADORA / FORMULARIO -->
+                <section className="bg-[#140b21] border border-purple-500/30 p-6 sm:p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-purple-400 to-indigo-600"></div>
+                    <form onSubmit={handleCalculate} className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+                        <div className="w-full sm:w-auto flex-1">
+                            <label className="block text-xs uppercase font-bold tracking-wider text-purple-300/80 mb-2">
+                                Ingrese su Fecha de Nacimiento
+                            </label>
+                            <input 
+                                type="date" 
+                                value={birthDate}
+                                onChange={(e) => setBirthDate(e.target.value)}
+                                className="w-full bg-[#0d0714] border border-purple-500/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-400 font-medium"
+                                required
+                            />
+                        </div>
+                        <button 
+                            type="submit" 
+                            className="w-full sm:w-auto mt-2 sm:mt-6 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white font-bold px-8 py-3.5 rounded-xl transition shadow-lg shadow-purple-500/20 cursor-pointer flex items-center justify-center gap-2 text-xs tracking-wider uppercase"
+                        >
+                            <span>Calcular Perfil</span>
+                            <span>➔</span>
+                        </button>
+                    </form>
+                </section>
+
+                <!-- RESULTADOS -->
                 {result && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
-                        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg">
-                            <span className="text-xs uppercase tracking-widest text-amber-500 font-semibold">Esencial</span>
-                            <h3 className="text-xl font-bold mt-1">Camino de Vida</h3>
-                            <div className="text-5xl font-black text-amber-400 my-3">{result.lifePath.value}</div>
-                            <p className="text-sm text-slate-400">
-                                {result.lifePath.isMaster ? '✨ Número Maestro detectado.' : 'Suma reducida de tu fecha de nacimiento.'}
-                            </p>
+                    <section ref={resultsRef} className="space-y-6 animate-fade-in scroll-mt-24">
+                        <div className="flex items-center gap-3">
+                            <h2 className="font-cinzel text-2xl font-bold text-purple-300">Tu Perfil Numerológico</h2>
+                            <div className="h-px bg-purple-900/40 flex-1"></div>
                         </div>
 
-                        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg">
-                            <span className="text-xs uppercase tracking-widest text-amber-500 font-semibold">Ciclo Actual ({result.currentPersonalYear.year})</span>
-                            <h3 className="text-xl font-bold mt-1">Año Personal</h3>
-                            <div className="text-5xl font-black text-amber-400 my-3">{result.currentPersonalYear.value}</div>
-                            <p className="text-sm text-slate-400">Energía predominante para ti en el año en curso.</p>
-                        </div>
-
-                        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg md:col-span-2">
-                            <h3 className="text-xl font-bold mb-4 text-amber-400">Los 4 Pináculos (Etapas Vitales)</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                                {result.pinnacles.map((p) => (
-                                    <div key={p.phase} className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
-                                        <div className="text-xs text-slate-500 mb-1">Fase {p.phase}</div>
-                                        <div className="text-3xl font-extrabold text-white mb-1">{p.value}</div>
-                                        <div className="text-xs text-amber-400">{p.ageRange}</div>
-                                    </div>
-                                ))}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-[#140b21] border border-purple-500/30 p-6 rounded-2xl shadow-lg">
+                                <span className="text-xs uppercase tracking-widest text-purple-400 font-semibold">Fuerza Vital</span>
+                                <h3 className="text-xl font-bold mt-1 text-white">Camino de Vida</h3>
+                                <div className="text-5xl font-black text-purple-300 my-3">{result.lifePath.value}</div>
+                                <p className="text-xs text-slate-300">
+                                    {result.lifePath.isMaster 
+                                        ? '✨ Número Maestro. Posees una vibración de alto potencial espiritual y liderazgo.' 
+                                        : 'Representa tu propósito central, aprendizajes y la lección principal en esta vida.'}
+                                </p>
                             </div>
-                        </div>
 
-                        {result.karmicDebts.length > 0 && (
-                            <div className="bg-amber-950/30 border border-amber-900/50 p-6 rounded-2xl shadow-lg md:col-span-2">
-                                <h3 className="text-lg font-bold text-amber-400 mb-2">⚠️ Deuda Kármica Detectada</h3>
-                                <ul className="list-disc list-inside text-sm text-amber-200/80">
-                                    {result.karmicDebts.map((debt, index) => (
-                                        <li key={index}>Número <strong>{debt.type}</strong> ({debt.detectedIn})</li>
+                            <div className="bg-[#140b21] border border-purple-500/30 p-6 rounded-2xl shadow-lg">
+                                <span className="text-xs uppercase tracking-widest text-purple-400 font-semibold">Ciclo Actual ({result.currentPersonalYear.year})</span>
+                                <h3 className="text-xl font-bold mt-1 text-white">Año Personal</h3>
+                                <div className="text-5xl font-black text-purple-300 my-3">{result.currentPersonalYear.value}</div>
+                                <p className="text-xs text-slate-300">
+                                    La atmósfera y energía predominante que guía tus oportunidades durante los 12 meses en curso.
+                                </p>
+                            </div>
+
+                            <div className="bg-[#140b21] border border-purple-500/30 p-6 rounded-2xl shadow-lg md:col-span-2">
+                                <h3 className="font-cinzel text-lg font-bold mb-4 text-purple-300">Los 4 Pináculos (Fases de Evolución)</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                                    {result.pinnacles.map((p) => (
+                                        <div key={p.phase} className="bg-[#0d0714] p-4 rounded-xl border border-purple-500/20 text-center">
+                                            <div className="text-xs text-slate-400 mb-1">Etapa {p.phase}</div>
+                                            <div className="text-3xl font-extrabold text-white mb-1">{p.value}</div>
+                                            <div className="text-xs text-purple-300 font-medium">{p.ageRange}</div>
+                                        </div>
                                     ))}
-                                </ul>
+                                </div>
                             </div>
-                        )}
-                    </div>
+
+                            {result.karmicDebts.length > 0 && (
+                                <div className="bg-[#180e29] border border-purple-500/40 p-6 rounded-2xl shadow-lg md:col-span-2">
+                                    <h3 className="text-base font-bold text-purple-300 mb-2 flex items-center gap-2">
+                                        <span>⚠️</span> Deuda Kármica Detectada
+                                    </h3>
+                                    <p className="text-xs text-slate-300 mb-3">
+                                        Los números kármicos señalan memorias o desafíos específicos que requieres equilibrar conscientemente.
+                                    </p>
+                                    <ul className="list-disc list-inside text-xs text-purple-200 font-medium space-y-1">
+                                        {result.karmicDebts.map((debt, index) => (
+                                            <li key={index}>Número <strong>{debt.type}</strong> ({debt.detectedIn})</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    </section>
                 )}
-            </div>
+
+                <!-- EXPLICACIÓN DIDÁCTICA -->
+                <section className="bg-[#140b21]/70 border border-purple-500/20 p-8 rounded-3xl space-y-6">
+                    <h2 className="font-cinzel text-xl font-bold text-purple-300 flex items-center gap-2">
+                        <span>📚</span> ¿Cómo funciona la Numerología Pitagórica?
+                    </h2>
+                    <p className="text-slate-300 leading-relaxed text-xs sm:text-sm">
+                        Fundada por el filósofo y matemático <strong>Pitágoras</strong>, esta disciplina sostiene que los números del 1 al 9 (y los números maestros 11, 22 y 33) expresan cualidad energéticas únicas que moldean nuestra existencia.
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                        <div className="bg-[#0d0714] p-4 rounded-xl border border-purple-500/20">
+                            <h4 className="font-bold text-purple-300 text-xs mb-1">El Camino de Vida</h4>
+                            <p className="text-xs text-slate-400">Calculado desde tu fecha completa. Muestra tu propósito central y los aprendizajes principales.</p>
+                        </div>
+                        <div className="bg-[#0d0714] p-4 rounded-xl border border-purple-500/20">
+                            <h4 className="font-bold text-purple-300 text-xs mb-1">Los 4 Pináculos</h4>
+                            <p className="text-xs text-slate-400">Muestran las cuatro grandes fases de tu vida y los desafíos o dones que se activarán en cada etapa.</p>
+                        </div>
+                        <div className="bg-[#0d0714] p-4 rounded-xl border border-purple-500/20">
+                            <h4 className="font-bold text-purple-300 text-xs mb-1">El Año Personal</h4>
+                            <p className="text-xs text-slate-400">Un ciclo de 9 años que te orienta sobre la atmósfera energética del año presente.</p>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+
+            <!-- FOOTER -->
+            <footer className="border-t border-purple-900/30 bg-[#0d0714] py-6 text-center text-xs text-purple-300/40">
+                <p>Vidia Portal © {new Date().getFullYear()} • Ecosistema Holístico Digital</p>
+            </footer>
+
         </div>
     );
 }
