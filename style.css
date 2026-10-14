@@ -1,0 +1,23 @@
+/* Estilos globales personalizados para Vidia Portal */
+body {
+    background-color: #020617; /* slate-950 */
+    color: #f1f5f9; /* slate-100 */
+    margin: 0;
+    padding: 0;
+}
+
+/* Transiciones suaves para las tarjetas de resultados */
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
