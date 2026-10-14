@@ -9,6 +9,14 @@ function NumerologyApp() {
         if (!dateString) return null;
         const [year, month, day] = dateString.split('-').map(Number);
 
+        // Cálculo de Edad Actual
+        const today = new Date();
+        let userAge = today.getFullYear() - year;
+        const m = today.getMonth() - (month - 1);
+        if (m < 0 || (m === 0 && today.getDate() < day)) {
+            userAge--;
+        }
+
         const reduceNumber = (num, keepMasters = true) => {
             let sum = num;
             while (sum > 9 && (!keepMasters || (sum !== 11 && sum !== 22 && sum !== 33))) {
@@ -50,12 +58,23 @@ function NumerologyApp() {
 
         const lifePathBase = isLifePathMaster ? 11 : lifePathValue;
         const p1Age = 36 - lifePathBase;
+        const p2Start = p1Age + 1;
+        const p2End = p1Age + 9;
+        const p3Start = p2End + 1;
+        const p3End = p2End + 9;
+        const p4Start = p3End + 1;
+
+        // Determinar qué pináculo está activo hoy según la edad
+        let activePhase = 4;
+        if (userAge <= p1Age) activePhase = 1;
+        else if (userAge >= p2Start && userAge <= p2End) activePhase = 2;
+        else if (userAge >= p3Start && userAge <= p3End) activePhase = 3;
 
         const pinnacles = [
-            { phase: 1, value: pinacle1, ageRange: `0 - ${p1Age} años` },
-            { phase: 2, value: pinacle2, ageRange: `${p1Age + 1} - ${p1Age + 9} años` },
-            { phase: 3, value: pinacle3, ageRange: `${p1Age + 10} - ${p1Age + 18} años` },
-            { phase: 4, value: pinacle4, ageRange: `${p1Age + 19}+ años` }
+            { phase: 1, value: pinacle1, ageRange: `0 - ${p1Age} años`, minAge: 0, maxAge: p1Age },
+            { phase: 2, value: pinacle2, ageRange: `${p2Start} - ${p2End} años`, minAge: p2Start, maxAge: p2End },
+            { phase: 3, value: pinacle3, ageRange: `${p3Start} - ${p3End} años`, minAge: p3Start, maxAge: p3End },
+            { phase: 4, value: pinacle4, ageRange: `${p4Start} a 99+ años`, minAge: p4Start, maxAge: 120 }
         ];
 
         const d1 = Math.abs(reduceToSingleDigit(day) - reduceToSingleDigit(month));
@@ -79,6 +98,8 @@ function NumerologyApp() {
 
         return {
             birthDate: dateString,
+            userAge,
+            activePhase,
             lifePath: { value: lifePathValue, isMaster: isLifePathMaster, rawSum: totalLifePathSum },
             birthDay: { original: day, reduced: birthDayReduced },
             attitudeNumber: { value: attitudeValue },
@@ -113,7 +134,6 @@ function NumerologyApp() {
             <header className="border-b border-purple-900/30 bg-[#0d0714]/80 backdrop-blur sticky top-0 z-50">
                 <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
                     <a href="#" className="flex items-center gap-3 group">
-                        {/* Isotipo: Estrella 5 Puntas con Halo */}
                         <svg className="w-7 h-7 text-purple-300 glow-star group-hover:scale-105 transition-transform" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2l2.9 6.8 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7-5.4-4.7 7.1-.6z"/>
                         </svg>
@@ -195,16 +215,40 @@ function NumerologyApp() {
                                 </p>
                             </div>
 
+                            {/* TARJETA DE PINÁCULOS CON RESALTE DE ETAPA ACTIVA */}
                             <div className="bg-[#140b21] border border-purple-500/30 p-6 rounded-2xl shadow-lg md:col-span-2">
-                                <h3 className="font-cinzel text-lg font-bold mb-4 text-purple-300">Los 4 Pináculos (Fases de Evolución)</h3>
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                                    <h3 className="font-cinzel text-lg font-bold text-purple-300">Los 4 Pináculos (Fases de Evolución)</h3>
+                                    <span className="text-xs font-semibold text-purple-300/80 bg-purple-950/60 px-3 py-1 rounded-full border border-purple-500/20 w-fit">
+                                        Edad actual: {result.userAge} años
+                                    </span>
+                                </div>
+
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                                    {result.pinnacles.map((p) => (
-                                        <div key={p.phase} className="bg-[#0d0714] p-4 rounded-xl border border-purple-500/20 text-center">
-                                            <div className="text-xs text-slate-400 mb-1">Etapa {p.phase}</div>
-                                            <div className="text-3xl font-extrabold text-white mb-1">{p.value}</div>
-                                            <div className="text-xs text-purple-300 font-medium">{p.ageRange}</div>
-                                        </div>
-                                    ))}
+                                    {result.pinnacles.map((p) => {
+                                        const isActive = p.phase === result.activePhase;
+                                        return (
+                                            <div 
+                                                key={p.phase} 
+                                                className={`p-4 rounded-xl text-center transition-all relative ${
+                                                    isActive 
+                                                        ? 'bg-[#1e1035] border-2 border-purple-400 shadow-lg shadow-purple-500/20 scale-[1.02]' 
+                                                        : 'bg-[#0d0714] border border-purple-500/20 opacity-80'
+                                                }`}
+                                            >
+                                                {isActive && (
+                                                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-indigo-600 text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full text-white shadow">
+                                                        Etapa Activa
+                                                    </span>
+                                                )}
+                                                <div className="text-xs text-slate-400 mb-1 pt-1">Etapa {p.phase}</div>
+                                                <div className="text-3xl font-extrabold text-white mb-1">{p.value}</div>
+                                                <div className={`text-xs font-medium ${isActive ? 'text-purple-300 font-bold' : 'text-purple-300/70'}`}>
+                                                    {p.ageRange}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
 
@@ -233,7 +277,7 @@ function NumerologyApp() {
                         <span>📚</span> ¿Cómo funciona la Numerología Pitagórica?
                     </h2>
                     <p className="text-slate-300 leading-relaxed text-xs sm:text-sm">
-                        Fundada por el filósofo y matemático <strong>Pitágoras</strong>, esta disciplina sostiene que los números del 1 al 9 (y los números maestros 11, 22 y 33) expresan cualidad energéticas únicas que moldean nuestra existencia.
+                        Fundada por el filósofo y matemático <strong>Pitágoras</strong>, esta disciplina sostiene que los números del 1 al 9 (y los números maestros 11, 22 y 33) expresan cualidades energéticas únicas que moldean nuestra existencia.
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                         <div className="bg-[#0d0714] p-4 rounded-xl border border-purple-500/20">
